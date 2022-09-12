@@ -1,0 +1,62 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "a39d177883975ec31dbd04da99b64c26",
+    "packages": [
+        {
+            "name": "linqur/singleton",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/linqur/Singleton.git",
+                "reference": "477651c75138c57b0ad817fd7015703bcc71bf32"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/linqur/Singleton/zipball/477651c75138c57b0ad817fd7015703bcc71bf32",
+                "reference": "477651c75138c57b0ad817fd7015703bcc71bf32",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Linqur\\Singleton\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "oleg khrulev",
+                    "email": "linqur@gmail.com"
+                }
+            ],
+            "description": "Реализация шаблона singleton",
+            "support": {
+                "issues": "https://github.com/linqur/Singleton/issues",
+                "source": "https://github.com/linqur/Singleton/tree/main"
+            },
+            "time": "2022-09-12T13:24:19+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "linqur/singleton": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.2.0"
+}

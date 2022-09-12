@@ -1,0 +1,19 @@
+{
+    "name": "linqur/iiko-service",
+    "description": "Библиотека для работы с api IikoCloud v1.0",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Linqur\\IikoService\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "oleg khrulev",
+            "email": "linqur@gmail.com"
+        }
+    ],
+    "require": {
+        "linqur/singleton": "dev-main"
+    }
+}
