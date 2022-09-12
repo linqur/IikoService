@@ -2,6 +2,7 @@
 
 namespace Linqur\IikoService\Settings;
 
+use Linqur\IikoService\Settings\Exception\SettingsNotSetException;
 use Linqur\Singleton\SingletonTrait;
 
 class Settings
@@ -18,6 +19,16 @@ class Settings
 
     public function getApiLogin()
     {
+        $this->checkValues();
         return $this->values->getApiLogin();
+    }
+
+    private function checkValues()
+    {
+        if ($this->values instanceof SettingsValuesInterface) {
+            return true;
+        }
+
+        throw new SettingsNotSetException();
     }
 }
