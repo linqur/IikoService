@@ -2,6 +2,7 @@
     "name": "linqur/iiko-service",
     "description": "Библиотека для работы с api IikoCloud v1.0",
     "type": "library",
+    "license": "Apache-2.0",
     "autoload": {
         "psr-4": {
             "Linqur\\IikoService\\": "src/"
@@ -13,6 +14,7 @@
             "email": "linqur@gmail.com"
         }
     ],
+    "minimum-stability": "dev",
     "require": {
         "linqur/singleton": "dev-main"
     }
