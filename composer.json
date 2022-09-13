@@ -14,7 +14,7 @@
             "email": "linqur@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "require": {
         "linqur/singleton": "^5.6"
     }
