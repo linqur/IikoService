@@ -16,6 +16,6 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "linqur/singleton": "dev-main"
+        "linqur/singleton": "^5.6"
     }
 }
