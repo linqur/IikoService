@@ -16,6 +16,7 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "linqur/singleton": "^5.6"
+        "linqur/singleton": "^5.6",
+        "emdotem/php-mysqli-database-class": "^2.9"
     }
 }
