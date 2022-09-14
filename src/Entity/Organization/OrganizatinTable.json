@@ -1,0 +1,21 @@
+{
+  "table_name": "Organization",
+  "fields": [
+    {
+      "name": "id",
+      "type": "string",
+      "is_index": true,
+      "index_type": "primary"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "is_index": false
+    },
+    {
+      "name": "created",
+      "type": "string",
+      "is_index": false
+    }
+  ]
+}

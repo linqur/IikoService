@@ -23,6 +23,18 @@ class Settings
         return $this->values->getApiLogin();
     }
 
+    public function getRepositoryConnect()
+    {
+        $this->checkValues();
+        return $this->values->getRepositoryConnect();
+    }
+
+    public function getRepositoryPreffix()
+    {
+        $this->checkValues();
+        return $this->values->getRepositoryPreffix();
+    }
+
     private function checkValues()
     {
         if ($this->values instanceof SettingsValuesInterface) {
