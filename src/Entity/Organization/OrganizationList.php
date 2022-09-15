@@ -2,11 +2,14 @@
 
 namespace Linqur\IikoService\Entity\Organization;
 
+use Linqur\IikoService\Api\Api;
 use Linqur\Singleton\SingletonTrait;
 
 class OrganizationList
 {
     use SingletonTrait;
+
+    const TIME_UPDATE_LIMIT = 86400;
 
     private $list;
     private $initAll = false;
@@ -20,7 +23,7 @@ class OrganizationList
     public function getById($id)
     {
         if (!isset($this->list[$id])) {
-            $this->setOrganizationById($id);
+            $this->setOrganization($id);
         }
 
         return isset($this->list[$id]) ? $this->list[$id] : null;
@@ -47,12 +50,55 @@ class OrganizationList
      * 
      * @return void
      */
-    private function setOrganizationById($id)
+    private function setOrganization($id)
     {
+        $organization = (new Repository())->getById($id);
+
+        do {
+            $needToUpdate = !$organization || $organization->createdTime->format('U') + self::TIME_UPDATE_LIMIT < date('U');
+
+            if (!$needToUpdate) break;
+            
+            $responseBody = (new Api())->getOrganizations($id);
+
+            if (empty($responseBody['organizations'][0])) break;
+
+            $organization = Builder::byResponse($responseBody['organizations'][0]);
+        } while(false);
+
+        if ($organization) {
+            $this->list[$organization->id] = $organization;
+        }
     }
 
     private function setAll()
     {
-                
+        $repository = new Repository();
+        $organizationList = $repository->getAll();
+
+        do {
+            $needToUpdate = !$organizationList || $repository->getAllLastUpdated()->format('U') + self::TIME_UPDATE_LIMIT < date('U');
+
+            if (!$needToUpdate) break;
+            
+            $responseBody = (new Api())->getOrganizations();
+
+            if (empty($responseBody['organizations'])) break;
+
+            $repository->deleteAll();
+
+            $organizationList = array();
+            foreach ($responseBody['organizations'] as $organization) {
+                $organizationList[] = Builder::byResponse($organization);
+            }
+
+            $repository->saveAll($organizationList);
+        } while(false);
+
+        if ($organizationList) {
+            foreach ($organizationList as $organization) {
+                $this->list[$organization->id] = $organization;
+            }
+        }
     }
 }

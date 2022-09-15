@@ -22,7 +22,6 @@ class Creator
     public function getQueryes()
     {
         $tableName = Repository::getInstance()->tableNamePrepare($this->settings->tableName);
-
         $fields = '';
         foreach ($this->settings->fields as $field) {
             $fields .= $fields ? ',' : '';
@@ -32,6 +31,15 @@ class Creator
 
         yield "CREATE TABLE `{$tableName}` ({$fields})";
         
+        foreach ($this->settings->fields as $field) {
+            if ($field->isIndex) {
+                switch ($field->indexType) {
+                    case 'primary':
+                        yield "ALTER TABLE `{$tableName}` ADD PRIMARY KEY (`{$field->name}`)";
+                        break;
+                }
+            }
+        }
     }
 
     private function fieldTypeMap($type)

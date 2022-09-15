@@ -9,6 +9,11 @@ class Builder
         return self::build($row->id, $row->name, (new \DateTime())->setTimestamp($row->created));
     }
 
+    public static function byResponse($body)
+    {
+        return self::build($body['id'], $body['name'], new \DateTime('now'));
+    }
+
     private static function build($id, $name, $created)
     {
         $organization = new Organization();

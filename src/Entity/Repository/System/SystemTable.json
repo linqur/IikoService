@@ -1,0 +1,16 @@
+{
+    "table_name": "System",
+    "fields": [
+      {
+        "name": "key",
+        "type": "string",
+        "is_index": true,
+        "index_type": "primary"
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "is_index": false
+      }
+    ]
+}

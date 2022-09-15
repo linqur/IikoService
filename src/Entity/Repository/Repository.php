@@ -51,6 +51,55 @@ class Repository
     }
 
     /**
+     * Вставка в таблицу
+     * 
+     * @param string $tableName
+     * @param array $obj [field => value]
+     */
+    public function insert($tableName, $obj)
+    {
+        $fields = $values = '';
+        foreach ($obj as $key => $val) {
+            $fields .= $fields ? ',' : '';
+            $fields .= "`{$key}`";
+
+            $values .= $values ? ',' : '';
+            $values .= "'{$val}'";
+        }
+
+        $tableName = $this->tableNamePrepare($tableName);
+
+        $sql = "INSERT INTO `{$tableName}` ({$fields}) VALUES ({$values})";
+
+        $this->db()->query($sql);
+    }
+
+    /**
+     * Обновление записи в таблице
+     * 
+     * @param string $tableName
+     * @param array $obj [field => value]
+     * @param array|null $where
+     */
+    public function update($tableName, $obj, $where = null)
+    {
+        $set = '';
+
+        foreach ($obj as $key => $val) {
+            $set .= $set ? ',' : '';
+            $set .= "`{$key}` = '{$val}'";
+        }
+
+        $tableName = $this->tableNamePrepare($tableName);
+
+        $sql = "UPDATE `{$tableName}` SET {$set}";
+        
+        if (!empty($where)) $sql .= ' WHERE '.$this->wherePrepare($where);
+
+        $this->db()->query($sql);
+    }
+
+    /**
      * Получить запись
      * 
      * @param string $tableName
@@ -58,17 +107,29 @@ class Repository
      * 
      * @return object|null
      */
-    public function getRow($tableName, $where)
+    public function getRow($tableName, $where = array())
     {
-        $queryWhere = '';
-        foreach ($where ?: array() as $whereKey => $whereValue) {
-            $queryWhere .= $queryWhere ? ' AND ' : '';
-            $queryWhere .= "`{$whereKey}` =  '{$whereValue}'";
-        }
-        $sql = "SELECT * FROM `{$tableName}`";
-        $sql .= $queryWhere ? ' WHERE '.$queryWhere : '';
+        $sql = "SELECT * FROM `".$this->tableNamePrepare($tableName)."`";
 
+        if (!empty($where)) $sql .= ' WHERE '.$this->wherePrepare($where);
+        
         return $this->db()->get_row($sql);
+    }
+    
+    /**
+     * Удалить записи
+     * 
+     * @param string $tableName
+     * @param array|null $where
+     */
+    public function delete($tableName, $where = array())
+    {
+        $tableName = $this->tableNamePrepare($tableName);
+
+        $sql = "DELETE FROM `{$tableName}`";
+        if ($where) $sql .= " WHERE ".$this->wherePrepare($where);
+
+        $this->db()->query($sql);
     }
 
     /** 
@@ -91,6 +152,17 @@ class Repository
     public function tableNamePrepare($tableName)
     {
         return $this->getPreffix().'_'.$tableName;
+    }
+
+    /** @var array $where */
+    private function wherePrepare($where)
+    {
+        $query = '';
+        foreach ($where as $key => $value) {
+            $query .= $query ? ' AND ' : '';
+            $query .= "`{$key}` =  '{$value}'";
+        }
+        return $query;
     }
 
     /** @return \nc_Db */
