@@ -23,6 +23,8 @@ class Request
             ->addPost('apiLogin', Settings::getInstance()->getApiLogin())
         ;
 
+        return array('token' => '123');
+
         return $this->handle($body);
     }
 
@@ -41,7 +43,7 @@ class Request
             ->getBody()
             ->setUrl(self::API_URL.'organizations')
             ->addHeaders('Content-Type: application/json')
-            // ->addHeaders('Authorization: Bearer '.Token::getInstance()->get())
+            ->addHeaders('Authorization: Bearer '.Token::getInstance()->get())
             ->addPost('organizationIds', $organizationIds)
             ->addPost('returnAdditionalInfo', $returnAdditionalInfo)
             ->addPost('includeDisabled', $includeDisabled)
@@ -74,7 +76,7 @@ class Request
             ->getBody()
             ->setUrl(self::API_URL.'terminal_groups')
             ->addHeaders('Content-Type: application/json')
-            // ->addHeaders('Authorization: Bearer '.Token::getInstance()->get())
+            ->addHeaders('Authorization: Bearer '.Token::getInstance()->get())
             ->addPost('organizationIds', $organizationIds)
             ->addPost('includeDisabled', $includeDisabled)
         ;
@@ -116,7 +118,7 @@ class Request
             ->getBody()
             ->setUrl(self::API_URL.'nomenclature')
             ->addHeaders('Content-Type: application/json')
-            // ->addHeaders('Authorization: Bearer '.Token::getInstance()->get())
+            ->addHeaders('Authorization: Bearer '.Token::getInstance()->get())
             ->addPost('organizationId', $organizationId)
             ->addPost('startRevision', $startRevision)
         ;

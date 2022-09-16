@@ -43,15 +43,27 @@ class Token
         return $this->get();
     }
 
-    private function setToken()
-    {
-        $this->createNewToken();
-    }
-
     private function needToUpdate()
     {
         return $this->createdTime->format('U') + self::LIFE_LIMIT < date('U');
     }
+
+    private function setToken()
+    {
+        $this->setFromRepository();
+
+        if (!$this->token) $this->createNewToken();
+    }
+
+    private function setFromRepository()
+    {
+        $repository = new Repository();
+        
+        $this->token = $repository->getToken();
+
+        if ($this->token) $this->createdTime = $repository->getCreated();
+    }
+    
 
     private function createNewToken()
     {
@@ -59,5 +71,9 @@ class Token
 
         $this->token = $creator->getToken();
         $this->createdTime = $creator->getCreatedTime();
+
+        if ($this->token) {
+            (new Repository())->save($this->token, $this->createdTime);
+        }
     }
 }
