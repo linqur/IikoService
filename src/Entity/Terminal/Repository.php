@@ -64,7 +64,7 @@ class Repository
                     'organization_id' => $terminal->organizationId,
                     'name' => $terminal->name,
                     'address' => $terminal->address,
-                    'created' => $terminal->createdTime->format('U'),
+                    'created' => $terminal->created->format('U'),
                 ), 
                 array('id' => $terminal->id)
             );
@@ -76,7 +76,7 @@ class Repository
                     'organization_id' => $terminal->organizationId,
                     'name' => $terminal->name,
                     'address' => $terminal->address,
-                    'created' => $terminal->createdTime->format('U'),
+                    'created' => $terminal->created->format('U'),
                 )
             );
         }

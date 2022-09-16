@@ -24,7 +24,7 @@ class Repository
 
         $row = IikoServiceRepository::getInstance()->getRow(self::TABLE_NAME, array('key' => $key));
 
-        return empty($row) ? false : $row['value'];
+        return empty($row) ? false : $row->value;
     }
 
     public function set($key, $value)

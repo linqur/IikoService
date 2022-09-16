@@ -7,13 +7,13 @@ class Builder
     /** @return Terminal */
     public static function byRepository($row)
     {
-
+        return self::build($row->id, $row->organization_id, $row->name, $row->address, (new \DateTime())->setTimestamp($row->created));
     }
 
     /** @return Terminal */
     public static function byResponse($row)
     {
-
+        return self::build($row['id'], $row['organizationId'], $row['name'], $row['address'], new \DateTime('now'));
     }
     
     /** @return Terminal */
