@@ -3,6 +3,7 @@
 namespace Linqur\IikoService;
 
 use Linqur\IikoService\Entity\Organization\OrganizationList;
+use Linqur\IikoService\Entity\Terminal\TerminalList;
 use Linqur\IikoService\Settings\Settings;
 use Linqur\IikoService\Settings\SettingsValues;
 use Linqur\IikoService\Settings\SettingsValuesInterface;
@@ -32,8 +33,23 @@ class IikoProvider
         Settings::getInstance()->setValues($settingsValues);
     }
 
+    /** 
+     * Получить список организаций
+     * 
+     * @return OrganizationList 
+     */
     public function getOrganizationList()
     {
         return OrganizationList::getInstance();
+    }
+
+    /** 
+     * Получить список терминалов
+     * 
+     * @return TerminalList 
+     */
+    public function getTerminalList()
+    {
+        return TerminalList::getInstance();
     }
 }
