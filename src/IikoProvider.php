@@ -2,6 +2,9 @@
 
 namespace Linqur\IikoService;
 
+use Linqur\IikoService\Api\Api;
+use Linqur\IikoService\Api\Token\Token;
+use Linqur\IikoService\Entity\Organization\Organization;
 use Linqur\IikoService\Entity\Organization\OrganizationList;
 use Linqur\IikoService\Entity\Terminal\TerminalList;
 use Linqur\IikoService\Settings\Settings;
@@ -51,5 +54,28 @@ class IikoProvider
     public function getTerminalList()
     {
         return TerminalList::getInstance();
+    }
+
+    /**
+     * Получить нуменклатуру
+     * 
+     * @param Organization $organization
+     * @param int $startRevision
+     * 
+     * @return array|null
+     */
+    public function getNumenclature($organization, $startRevision = 0)
+    {
+        return (new Api())->getNumenclature($organization->id, $startRevision);
+    }
+
+    /**
+     * Получить токен
+     * 
+     * @return Token
+     */
+    public function getToken()
+    {
+        return Token::getInstance();
     }
 }
