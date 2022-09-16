@@ -33,7 +33,7 @@ class Repository
 
         if (!$this->isTableExists()) $this->createTable();
 
-        if ($this->get($key) !== false) {
+        if ($this->get($key) === false) {
             IikoServiceRepository::getInstance()
                 ->insert(self::TABLE_NAME, array('key' => $key, 'value' => $value))
             ;

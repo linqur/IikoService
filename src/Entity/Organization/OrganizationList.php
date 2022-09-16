@@ -52,10 +52,11 @@ class OrganizationList
      */
     private function setOrganization($id)
     {
-        $organization = (new Repository())->getById($id);
+        $repository = new Repository();
+        $organization = $repository->getById($id);
 
         do {
-            $needToUpdate = !$organization || $organization->createdTime->format('U') + self::TIME_UPDATE_LIMIT < date('U');
+            $needToUpdate = !$organization || $organization->createdTime->format('U') + self::TIME_UPDATE_LIMIT <= date('U');
 
             if (!$needToUpdate) break;
             
@@ -64,6 +65,8 @@ class OrganizationList
             if (empty($responseBody['organizations'][0])) break;
 
             $organization = Builder::byResponse($responseBody['organizations'][0]);
+
+            $repository->save($organization);
         } while(false);
 
         if ($organization) {
@@ -77,7 +80,8 @@ class OrganizationList
         $organizationList = $repository->getAll();
 
         do {
-            $needToUpdate = !$organizationList || $repository->getAllLastUpdated()->format('U') + self::TIME_UPDATE_LIMIT < date('U');
+            $lastUpdated = $repository->getAllLastUpdated();
+            $needToUpdate = !$organizationList || !$lastUpdated || $lastUpdated->format('U') + self::TIME_UPDATE_LIMIT <= date('U');
 
             if (!$needToUpdate) break;
             

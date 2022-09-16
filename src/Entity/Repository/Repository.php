@@ -115,6 +115,23 @@ class Repository
         
         return $this->db()->get_row($sql);
     }
+
+    /**
+     * Получить запись
+     * 
+     * @param string $tableName
+     * @param array|null $where
+     * 
+     * @return array|null
+     */
+    public function getRows($tableName, $where = array())
+    {
+        $sql = "SELECT * FROM `".$this->tableNamePrepare($tableName)."`";
+
+        if (!empty($where)) $sql .= ' WHERE '.$this->wherePrepare($where);
+        
+        return $this->db()->get_results($sql);
+    }
     
     /**
      * Удалить записи

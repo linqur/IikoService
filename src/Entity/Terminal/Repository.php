@@ -1,6 +1,6 @@
 <?php
 
-namespace Linqur\IikoService\Entity\Organization;
+namespace Linqur\IikoService\Entity\Terminal;
 
 use Linqur\IikoService\Entity\Repository\Repository as IikoServiceRepository;
 use Linqur\IikoService\Entity\Repository\System\Repository as SystemRepository;
@@ -8,10 +8,10 @@ use Linqur\IikoService\Entity\Repository\TableCreator\SettingsBuilder;
 
 class Repository
 {
-    const TABLE_NAME = 'Organization';
-    const ALL_UPDATED_SYSTEM_FIDEL = 'organization_all_updated';
+    const TABLE_NAME = 'Terminal';
+    const ALL_UPDATED_SYSTEM_FIDEL = 'terminal_all_updated';
 
-    /** @return Organization|null */
+    /** @return Terminal|null */
     public function getById($id)
     {
         if (!IikoServiceRepository::getInstance()->isOn() || !$this->isTableExists()) {
@@ -23,7 +23,7 @@ class Repository
         return $row ? Builder::byRepository($row) : null;
     }
 
-    /** @return Organization[] */
+    /** @return Terminal[] */
     public function getAll()
     {
         if (!IikoServiceRepository::getInstance()->isOn() || !$this->isTableExists()) {
@@ -50,39 +50,43 @@ class Repository
         return (new \DateTime())->setTimestamp($lastUpdated);
     }
 
-    /** @param Organization $organization */
-    public function save($organization)
+    /** @param Terminal $terminal */
+    public function save($terminal)
     {
         if (!IikoServiceRepository::getInstance()->isOn()) return;
 
         if (!$this->isTableExists()) $this->createTable();
 
-        if ($this->getById($organization->id)) {
+        if ($this->getById($terminal->id)) {
             IikoServiceRepository::getInstance()->update(
                 self::TABLE_NAME, 
-                array(
-                    'name' => $organization->name,
-                    'created' => $organization->createdTime->format('U'),
+                array(                    
+                    'organization_id' => $terminal->organizationId,
+                    'name' => $terminal->name,
+                    'address' => $terminal->address,
+                    'created' => $terminal->createdTime->format('U'),
                 ), 
-                array('id' => $organization->id)
+                array('id' => $terminal->id)
             );
         } else {
             IikoServiceRepository::getInstance()->insert(
                 self::TABLE_NAME, 
                 array(
-                    'id' => $organization->id,
-                    'name' => $organization->name,
-                    'created' => $organization->createdTime->format('U'),
+                    'id' => $terminal->id,
+                    'organization_id' => $terminal->organizationId,
+                    'name' => $terminal->name,
+                    'address' => $terminal->address,
+                    'created' => $terminal->createdTime->format('U'),
                 )
             );
         }
     }
 
-    /** @param Organization[] $organizationList */
-    public function saveAll($organizationList)
+    /** @param Terminal[] $terminalList */
+    public function saveAll($terminalList)
     {
-        foreach ($organizationList as $organization) {
-            $this->save($organization);
+        foreach ($terminalList as $terminal) {
+            $this->save($terminal);
         }
 
         (new SystemRepository())->set(self::ALL_UPDATED_SYSTEM_FIDEL, date('U'));
@@ -101,7 +105,7 @@ class Repository
     private function createTable()
     {
         IikoServiceRepository::getInstance()->createTable(
-            SettingsBuilder::fromJson(__DIR__.'/OrganizationTable.json')
+            SettingsBuilder::fromJson(__DIR__.'/TerminalTable.json')
         );
     }
 }
