@@ -90,6 +90,7 @@ class Repository
 
     public function deleteAll()
     {
+        if (!IikoServiceRepository::getInstance()->isOn()) return;
         IikoServiceRepository::getInstance()->delete(self::TABLE_NAME);
     }
 
