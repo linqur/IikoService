@@ -46,6 +46,7 @@ class Creator
     {
         switch ($type) {
             case 'string': return 'varchar(255)';
+            case 'int': return 'int';
         }
     }
 

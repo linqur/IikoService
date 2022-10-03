@@ -4,6 +4,7 @@ namespace Linqur\IikoService\Api\Request;
 
 class Response
 {
+    /** @var string */
     private $response;
     private $responseInfo;
 
@@ -26,6 +27,6 @@ class Response
     /** @return array */
     public function getParsedBody()
     {
-        return json_encode($this->response, true);
+        return json_decode($this->response, true);
     }
 }

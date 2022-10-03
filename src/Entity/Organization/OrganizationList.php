@@ -60,7 +60,7 @@ class OrganizationList
 
             if (!$needToUpdate) break;
             
-            $responseBody = (new Api())->getOrganizations($id);
+            $responseBody = (new Api())->getOrganizations(array($id));
 
             if (empty($responseBody['organizations'][0])) break;
 

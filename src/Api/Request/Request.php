@@ -2,12 +2,16 @@
 
 namespace Linqur\IikoService\Api\Request;
 
+use Linqur\IikoService\Api\Request\Exception\RequestException;
 use Linqur\IikoService\Api\Token\Token;
+use Linqur\IikoService\Entity\Order\Order;
 use Linqur\IikoService\Settings\Settings;
 
 class Request
 {   
     const API_URL = 'https://api-ru.iiko.services/api/1/';
+    
+    private $repeatRequest = false;
 
     /**
      * Создать токен
@@ -22,9 +26,7 @@ class Request
             ->addHeaders('Content-Type: application/json')
             ->addPost('apiLogin', Settings::getInstance()->getApiLogin())
         ;
-
-        return array('token' => '123');
-
+        
         return $this->handle($body);
     }
 
@@ -49,17 +51,18 @@ class Request
             ->addPost('includeDisabled', $includeDisabled)
         ;
 
-        return json_decode('{
-            "correlationId": "48fb4cd3-2ef6-4479-bea1-7c92721b988c",
-            "organizations": [
-              {
-                "responseType": "string",
-                "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
-                "name": "string"
-              }
-            ]
-          }', true);
-        return $this->handle($body);
+        try {
+            $response = $this->handle($body);
+        } catch (RequestException $e) {
+            if ($e->getCode() === 401 && !$this->repeatRequest) {
+                $this->repeatRequest = true;
+                Token::getInstance()->getNew();
+                return $this->getOrganizations($organizationIds, $returnAdditionalInfo, $includeDisabled);
+            }
+            throw $e;
+        }
+
+        return $response;
     }
 
     /**
@@ -81,24 +84,18 @@ class Request
             ->addPost('includeDisabled', $includeDisabled)
         ;
 
-        return json_decode('{
-            "correlationId": "48fb4cd3-2ef6-4479-bea1-7c92721b988c",
-            "terminalGroups": [
-              {
-                "organizationId": "7bc05553-4b68-44e8-b7bc-37be63c6d9e9",
-                "items": [
-                  {
-                    "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
-                    "organizationId": "7bc05553-4b68-44e8-b7bc-37be63c6d9e9",
-                    "name": "string",
-                    "address": "string"
-                  }
-                ]
-              }
-            ]
-          }', true);
-
-        return $this->handle($body);
+        try {
+            $response = $this->handle($body);
+        } catch (RequestException $e) {
+            if ($e->getCode() === 401 && !$this->repeatRequest) {
+                $this->repeatRequest = true;
+                Token::getInstance()->getNew();
+                return $this->getTerminalGroups($organizationIds, $includeDisabled);
+            }
+            throw $e;
+        }
+        
+        return $response;
     }
 
     /**
@@ -122,144 +119,112 @@ class Request
             ->addPost('organizationId', $organizationId)
             ->addPost('startRevision', $startRevision)
         ;
+        
+        try {
+            $response = $this->handle($body);
+        } catch (RequestException $e) {
+            if ($e->getCode() === 401 && !$this->repeatRequest) {
+                $this->repeatRequest = true;
+                Token::getInstance()->getNew();
+                return $this->getNumenclature($organizationId, $startRevision);
+            }
+            throw $e;
+        }
 
-        return json_decode('{
-            "correlationId": "48fb4cd3-2ef6-4479-bea1-7c92721b988c",
-            "groups": [
-              {
-                "imageLinks": [
-                  "string"
-                ],
-                "parentGroup": "258adf23-5b0c-4f5d-8998-e5cc7a8451dd",
-                "order": 0,
-                "isIncludedInMenu": true,
-                "isGroupModifier": true,
-                "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
-                "code": "string",
-                "name": "string",
-                "description": "string",
-                "additionalInfo": "string",
-                "tags": [
-                  "string"
-                ],
-                "isDeleted": true,
-                "seoDescription": "string",
-                "seoText": "string",
-                "seoKeywords": "string",
-                "seoTitle": "string"
-              }
-            ],
-            "productCategories": [
-              {
-                "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
-                "name": "string",
-                "isDeleted": true
-              }
-            ],
-            "products": [
-              {
-                "fatAmount": 0,
-                "proteinsAmount": 0,
-                "carbohydratesAmount": 0,
-                "energyAmount": 0,
-                "fatFullAmount": 0,
-                "proteinsFullAmount": 0,
-                "carbohydratesFullAmount": 0,
-                "energyFullAmount": 0,
-                "weight": 0,
-                "groupId": "eb54e96e-21b8-4f54-9cd4-80fccbd06f55",
-                "productCategoryId": "1e32231d-b8a1-4145-b539-820301c2af64",
-                "type": "string",
-                "orderItemType": "Product",
-                "modifierSchemaId": "51a77930-ad82-4138-b68f-0d444ed97b5f",
-                "modifierSchemaName": "string",
-                "splittable": true,
-                "measureUnit": "string",
-                "sizePrices": [
-                  {
-                    "sizeId": "f98600f7-1d0f-4a64-936e-93e133055658",
-                    "price": {
-                      "currentPrice": 0,
-                      "isIncludedInMenu": true,
-                      "nextPrice": 0,
-                      "nextIncludedInMenu": true,
-                      "nextDatePrice": "2019-08-24 14:15:22.123"
-                    }
-                  }
-                ],
-                "modifiers": [
-                  {
-                    "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
-                    "defaultAmount": 0,
-                    "minAmount": 0,
-                    "maxAmount": 0,
-                    "required": true,
-                    "hideIfDefaultAmount": true,
-                    "splittable": true,
-                    "freeOfChargeAmount": 0
-                  }
-                ],
-                "groupModifiers": [
-                  {
-                    "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
-                    "minAmount": 0,
-                    "maxAmount": 0,
-                    "required": true,
-                    "childModifiersHaveMinMaxRestrictions": true,
-                    "childModifiers": [
-                      {
-                        "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
-                        "defaultAmount": 0,
-                        "minAmount": 0,
-                        "maxAmount": 0,
-                        "required": true,
-                        "hideIfDefaultAmount": true,
-                        "splittable": true,
-                        "freeOfChargeAmount": 0
-                      }
-                    ],
-                    "hideIfDefaultAmount": true,
-                    "defaultAmount": 0,
-                    "splittable": true,
-                    "freeOfChargeAmount": 0
-                  }
-                ],
-                "imageLinks": [
-                  "string"
-                ],
-                "doNotPrintInCheque": true,
-                "parentGroup": "258adf23-5b0c-4f5d-8998-e5cc7a8451dd",
-                "order": 0,
-                "fullNameEnglish": "string",
-                "useBalanceForSell": true,
-                "canSetOpenPrice": true,
-                "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
-                "code": "string",
-                "name": "string",
-                "description": "string",
-                "additionalInfo": "string",
-                "tags": [
-                  "string"
-                ],
-                "isDeleted": true,
-                "seoDescription": "string",
-                "seoText": "string",
-                "seoKeywords": "string",
-                "seoTitle": "string"
-              }
-            ],
-            "sizes": [
-              {
-                "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
-                "name": "string",
-                "priority": 0,
-                "isDefault": true
-              }
-            ],
-            "revision": 0
-          }', true);
+        return $response;
+    }
 
-        return $this->handle($body);
+    /** 
+     * Получить список типов оплат
+     * 
+     * @param array $organizationIds;
+     * 
+     * @return array|null
+     */
+    public function getPaymentTypes($organizationIds)
+    {
+        $body = $this
+            ->getBody()
+            ->setUrl(self::API_URL.'payment_types')
+            ->addHeaders('Content-Type: application/json')
+            ->addHeaders('Authorization: Bearer '.Token::getInstance()->get())
+            ->addPost('organizationIds', $organizationIds)
+        ;
+
+        try {
+            $response = $this->handle($body);
+        } catch (RequestException $e) {
+            if ($e->getCode() === 401 && !$this->repeatRequest) {
+                $this->repeatRequest = true;
+                Token::getInstance()->getNew();
+                return $this->getPaymentTypes($organizationIds);
+            }
+            throw $e;
+        }
+        
+        return $response;
+    }
+
+    /**
+     * Создать заказ
+     * 
+     * @param string $organizationId
+     * @param string $terminalGroupId
+     * @param Order $order
+     * 
+     * @return array
+     */
+    public function orderCreate($organizationId, $terminalGroupId, $order)
+    {
+        $body = $this
+            ->getBody()
+            ->setUrl(self::API_URL.'nomenclature')
+            ->addHeaders('Content-Type: application/json')
+            ->addHeaders('Authorization: Bearer '.Token::getInstance()->get())
+            ->addPost('organizationId', $organizationId)
+            ->addPost('terminalGroupId', $terminalGroupId)
+            ->addPost('order', $this->orderToRequest($order))
+        ;
+    }
+
+    /** @param Order $order */
+    private function orderToRequest($order)
+    {   
+        $orderRequest = array(
+            'phone' => $order->phone,
+        );
+
+        foreach ($order->items as $item) {
+            $orderRequest['items'][] = array(
+                'productId' => $item->productId,
+                'price' => $item->price,
+                'type' => $item->type,
+                'amount' => $item->amount,
+            );
+        }
+
+        foreach ($order->payments as $payment) {
+            $orderRequest['payments'][] = array(
+                'paymentTypeKind' => $payment->paymentTypeKind,
+                'sum' => $payment->sum,
+                'paymentTypeId' => $payment->paymentTypeId,
+            );
+        }
+
+        if (!empty($order->customer)) {
+            $orderRequest['customer'] = array(
+                'id' => $order->customer->id,
+                'name' => $order->customer->name,
+            );
+        }
+
+        if (!empty($order->guests)) {
+            $orderRequest['guests'] = array(
+                'count' => $order->guests['count'],
+            );
+        }
+    
+        return $orderRequest;
     }
 
     /** @return RequestBody */

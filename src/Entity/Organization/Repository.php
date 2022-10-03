@@ -27,12 +27,12 @@ class Repository
     public function getAll()
     {
         if (!IikoServiceRepository::getInstance()->isOn() || !$this->isTableExists()) {
-            return null;
+            return array();
         }
 
         $rows = IikoServiceRepository::getInstance()->getRows(self::TABLE_NAME) ?: array();
 
-        $list = [];
+        $list = array();
         foreach ($rows as $row) {
             $list[] = Builder::byRepository($row);
         }

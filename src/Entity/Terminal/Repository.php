@@ -9,7 +9,7 @@ use Linqur\IikoService\Entity\Repository\TableCreator\SettingsBuilder;
 class Repository
 {
     const TABLE_NAME = 'Terminal';
-    const ALL_UPDATED_SYSTEM_FIDEL = 'terminal_all_updated';
+    const ALL_UPDATED_SYSTEM_FIELD = 'terminal_all_updated';
 
     /** @return Terminal|null */
     public function getById($id)
@@ -27,12 +27,12 @@ class Repository
     public function getAll()
     {
         if (!IikoServiceRepository::getInstance()->isOn() || !$this->isTableExists()) {
-            return null;
+            return array();
         }
 
         $rows = IikoServiceRepository::getInstance()->getRows(self::TABLE_NAME) ?: array();
 
-        $list = [];
+        $list = array();
         foreach ($rows as $row) {
             $list[] = Builder::byRepository($row);
         }
@@ -43,7 +43,7 @@ class Repository
     /** @return \DateTimeInterface|null */
     public function getAllLastUpdated()
     {
-        if (!$lastUpdated = (new SystemRepository())->get(self::ALL_UPDATED_SYSTEM_FIDEL)) {
+        if (!$lastUpdated = (new SystemRepository())->get(self::ALL_UPDATED_SYSTEM_FIELD)) {
             return null;
         }
 
@@ -89,7 +89,7 @@ class Repository
             $this->save($terminal);
         }
 
-        (new SystemRepository())->set(self::ALL_UPDATED_SYSTEM_FIDEL, date('U'));
+        (new SystemRepository())->set(self::ALL_UPDATED_SYSTEM_FIELD, date('U'));
     }
 
     public function deleteAll()

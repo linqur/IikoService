@@ -12,7 +12,7 @@ class TerminalList
 
     const TIME_UPDATE_LIMIT = 86400;
 
-    private $list;
+    private $list = array();
     private $initAll = false;
     private $updated = false;
     
@@ -30,6 +30,27 @@ class TerminalList
         }
 
         return isset($this->list[$id]) ? $this->list[$id] : null;
+    }
+
+    /**
+     * Получить список терминалов в id организации
+     * 
+     * @param string $organizationId
+     * 
+     * @return Terminal[]
+     */
+    public function getByOrganizationId($organizationId)
+    {
+        $result = array();
+
+        foreach ($this->getAll() as $terminal)
+        {
+            if ($terminal->organizationId == $organizationId) {
+                $result[] = $terminal; 
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -80,9 +101,7 @@ class TerminalList
         $needToUpdate = !$terminalList || !$lastUpdated || $lastUpdated->format('U') + self::TIME_UPDATE_LIMIT <= date('U');
 
         if ($needToUpdate && !$this->updated) {
-            $this->update();   
-            $this->setAll();         
-            return;
+            $terminalList = $this->update() ?: $terminalList;
         }
 
         foreach ($terminalList as $terminal) {
@@ -102,9 +121,9 @@ class TerminalList
         }
 
         $groups = (new Api())->getTerminalGroups($organizationIds);
-
+        
+        $terminals = array();
         if (!empty($groups['terminalGroups'])) {
-            $terminals = array();
             foreach ($groups['terminalGroups'] as $group) {
                 foreach ($group['items'] as $item) {
                     $terminals[] = Builder::byResponse($item);
@@ -114,5 +133,7 @@ class TerminalList
         }
 
         $this->updated = true;
+
+        return $terminals;
     }
 }
