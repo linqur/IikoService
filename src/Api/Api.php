@@ -3,7 +3,6 @@
 namespace Linqur\IikoService\Api;
 
 use Linqur\IikoService\Api\Request\Request;
-use Linqur\IikoService\Entity\Order\Order;
 
 class Api
 {
@@ -68,12 +67,65 @@ class Api
      * 
      * @param string $organizationId
      * @param string $terminalGroupId
-     * @param Order $order
+     * @param array $order
      * 
      * @return array
      */
-    public function orderCreate($organizationId, $terminalGroupId, $order)
+    public function deliveryOrderCreate($organizationId, $terminalGroupId, $order)
     {
-        return (new Request())->orderCreate($organizationId, $terminalGroupId, $order);
+        return (new Request())->deliveryOrderCreate($organizationId, $terminalGroupId, $order);
+    }
+
+    /**
+     * Получить список типов заказа
+     * 
+     * @param array $organizationId
+     * 
+     * @return array
+     */
+    public function getOrderTypes($organizationIds)
+    {
+        return (new Request())->getOrderTypes($organizationIds);
+    }
+
+    /**
+     * Получить список Городов
+     * 
+     * @param array $organizationId
+     * 
+     * @return array
+     */
+    public function getCityes($organizationIds)
+    {
+        return (new Request())->getCities($organizationIds);
+    }
+
+    /**
+     * Получить список Улиц города
+     * 
+     * @param string $organizationId
+     * @param string $cityId
+     * 
+     * @return array
+     */
+    public function getStreets($organizationId, $cityId)
+    {
+        return (new Request())->getStreets($organizationId, $cityId);
+    }
+
+    /**
+     * Получить заказы
+     * 
+     * 
+     * @param array $organizationIds
+     * @param array|null $orderIds
+     * @param array|null $sourceKeys
+     * @param array|null $posOrderIds
+     * 
+     * @return array
+     */
+    public function getOrder($organizationIds, $orderIds = null, $sourceKeys = null, $posOrderIds = null)
+    {
+        return (new Request())->getOrder($organizationIds, $orderIds, $sourceKeys);
     }
 }

@@ -10,13 +10,10 @@ class Order
     public $id;
     /** @var string номер заказа в интернет-магазине */
     public $externalNumber;
-    
-    /** @var Customer */
-    public $customer;
+    /** @var \DatreTimeInterface */
+    public $completeBefore;
     /** @var string */
     public $phone;
-    /** @var array */
-    public $guests;
     /** @var Item[] */
     public $items;
     /** @var Payment[] */

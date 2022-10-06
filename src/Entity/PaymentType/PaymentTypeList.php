@@ -16,7 +16,7 @@ class PaymentTypeList
     private $initAll = false;
     private $updated = false;
 
-     /**
+    /**
      * Получить по id в системе IIKO
      * 
      * @param string $id
@@ -32,7 +32,7 @@ class PaymentTypeList
         return isset($this->list[$id]) ? $this->list[$id] : null;
     }
 
-     /**
+    /**
      * Получить все типы оплат
      * 
      * @return PaymentType[]
@@ -47,7 +47,7 @@ class PaymentTypeList
         return $this->list;
     }
 
-     /**
+    /**
      * Установить организацию
      * 
      * @param string $id
@@ -59,7 +59,7 @@ class PaymentTypeList
         $repository = new Repository();
         $paymentType = $repository->getById($id);
 
-        $needToUpdate = !$paymentType || $paymentType->createdTime->format('U') + self::TIME_UPDATE_LIMIT <= date('U');
+        $needToUpdate = !$paymentType || $paymentType->created->format('U') + self::TIME_UPDATE_LIMIT <= date('U');
 
         if ($needToUpdate && !$this->updated) {
             $this->update();
@@ -91,10 +91,6 @@ class PaymentTypeList
 
     private function update()
     {
-        $repository = new Repository();
-
-        $repository->deleteAll();
-
         $organizationIds = array();
         foreach(OrganizationList::getInstance()->getAll() as $organization) {
             $organizationIds[] = $organization->id;
@@ -107,6 +103,9 @@ class PaymentTypeList
             foreach ($paymentTypes['paymentTypes'] as $paymentType) {
                 $paymentTYpeList[] = Builder::byResponse($paymentType);
             }
+
+            $repository = new Repository();
+            $repository->deleteAll();
             $repository->saveAll($paymentTYpeList);
         }
 

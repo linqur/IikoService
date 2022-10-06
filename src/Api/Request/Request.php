@@ -164,67 +164,174 @@ class Request
         
         return $response;
     }
+    
+    /**
+     * Получить список типов заказа
+     * 
+     * @param array $organizationId
+     * 
+     * @return array
+     */
+    public function getOrderTypes($organizationIds)
+    {
+        $body = $this
+            ->getBody()
+            ->setUrl(self::API_URL.'deliveries/order_types')
+            ->addHeaders('Content-Type: application/json')
+            ->addHeaders('Authorization: Bearer '.Token::getInstance()->get())
+            ->addPost('organizationIds', $organizationIds)
+        ;
+
+        try {
+            $response = $this->handle($body);
+        } catch (RequestException $e) {
+            if ($e->getCode() === 401 && !$this->repeatRequest) {
+                $this->repeatRequest = true;
+                Token::getInstance()->getNew();
+                return $this->getOrderTypes($organizationIds);
+            }
+            throw $e;
+        }
+        
+        return $response;
+    }
 
     /**
      * Создать заказ
      * 
      * @param string $organizationId
      * @param string $terminalGroupId
-     * @param Order $order
+     * @param array $order
      * 
      * @return array
      */
-    public function orderCreate($organizationId, $terminalGroupId, $order)
+    public function deliveryOrderCreate($organizationId, $terminalGroupId, $order)
     {
         $body = $this
             ->getBody()
-            ->setUrl(self::API_URL.'nomenclature')
+            ->setUrl(self::API_URL.'deliveries/create')
             ->addHeaders('Content-Type: application/json')
             ->addHeaders('Authorization: Bearer '.Token::getInstance()->get())
             ->addPost('organizationId', $organizationId)
             ->addPost('terminalGroupId', $terminalGroupId)
-            ->addPost('order', $this->orderToRequest($order))
+            ->addPost('order', $order)
         ;
+
+        try {
+            $response = $this->handle($body);
+        } catch (RequestException $e) {
+            if ($e->getCode() === 401 && !$this->repeatRequest) {
+                $this->repeatRequest = true;
+                Token::getInstance()->getNew();
+                return $this->deliveryOrderCreate($organizationId, $terminalGroupId, $order);
+            }
+            throw $e;
+        }
+        
+        return $response;
+
     }
 
-    /** @param Order $order */
-    private function orderToRequest($order)
-    {   
-        $orderRequest = array(
-            'phone' => $order->phone,
-        );
+    /**
+     * Получить список Городов
+     * 
+     * @param array $organizationId
+     * 
+     * @return array
+     */
+    public function getCities($organizationIds)
+    {
+        $body = $this
+            ->getBody()
+            ->setUrl(self::API_URL.'cities')
+            ->addHeaders('Content-Type: application/json')
+            ->addHeaders('Authorization: Bearer '.Token::getInstance()->get())
+            ->addPost('organizationIds', $organizationIds)
+        ;
 
-        foreach ($order->items as $item) {
-            $orderRequest['items'][] = array(
-                'productId' => $item->productId,
-                'price' => $item->price,
-                'type' => $item->type,
-                'amount' => $item->amount,
-            );
+        try {
+            $response = $this->handle($body);
+        } catch (RequestException $e) {
+            if ($e->getCode() === 401 && !$this->repeatRequest) {
+                $this->repeatRequest = true;
+                Token::getInstance()->getNew();
+                return $this->getCities($organizationIds);
+            }
+            throw $e;
         }
-
-        foreach ($order->payments as $payment) {
-            $orderRequest['payments'][] = array(
-                'paymentTypeKind' => $payment->paymentTypeKind,
-                'sum' => $payment->sum,
-                'paymentTypeId' => $payment->paymentTypeId,
-            );
-        }
-
-        if (!empty($order->customer)) {
-            $orderRequest['customer'] = array(
-                'id' => $order->customer->id,
-                'name' => $order->customer->name,
-            );
-        }
-
-        if (!empty($order->guests)) {
-            $orderRequest['guests'] = array(
-                'count' => $order->guests['count'],
-            );
-        }
+        
+        return $response;
+    }
     
-        return $orderRequest;
+    /**
+     * Получить список Улиц города
+     * 
+     * @param string $organizationId
+     * @param string $cityId
+     * 
+     * @return array
+     */
+    public function getStreets($organizationId, $cityId)
+    {
+        $body = $this
+            ->getBody()
+            ->setUrl(self::API_URL.'streets/by_city')
+            ->addHeaders('Content-Type: application/json')
+            ->addHeaders('Authorization: Bearer '.Token::getInstance()->get())
+            ->addPost('organizationId', $organizationId)
+            ->addPost('cityId', $cityId)
+        ;
+
+        try {
+            $response = $this->handle($body);
+        } catch (RequestException $e) {
+            if ($e->getCode() === 401 && !$this->repeatRequest) {
+                $this->repeatRequest = true;
+                Token::getInstance()->getNew();
+                return $this->getStreets($organizationId, $cityId);
+            }
+            throw $e;
+        }
+        
+        return $response;
+    }
+    
+    /**
+     * Получить заказы
+     * 
+     * 
+     * @param array $organizationIds
+     * @param array|null $orderIds
+     * @param array|null $sourceKeys
+     * @param array|null $posOrderIds
+     * 
+     * @return array
+     */
+    public function getOrder($organizationIds, $orderIds = null, $sourceKeys = null, $posOrderIds = null)
+    {
+        $body = $this
+            ->getBody()
+            ->setUrl(self::API_URL.'order/by_id')
+            ->addHeaders('Content-Type: application/json')
+            ->addHeaders('Authorization: Bearer '.Token::getInstance()->get())
+            ->addPost('organizationIds', $organizationIds)
+            ->addPost('orderIds', $orderIds)
+            ->addPost('sourceKeys', $sourceKeys)
+            ->addPost('posOrderIds', $posOrderIds)
+        ;
+
+        try {
+            $response = $this->handle($body);
+        } catch (RequestException $e) {
+            if ($e->getCode() === 401 && !$this->repeatRequest) {
+                $this->repeatRequest = true;
+                Token::getInstance()->getNew();
+                return $this->getOrder($organizationIds, $orderIds, $sourceKeys, $posOrderIds);
+            }
+            throw $e;
+        }
+        
+        return $response;
     }
 
     /** @return RequestBody */

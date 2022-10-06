@@ -78,8 +78,8 @@ class TerminalList
     {
         $repository = new Repository();
         $terminal = $repository->getById($id);
-
-        $needToUpdate = !$terminal || $terminal->createdTime->format('U') + self::TIME_UPDATE_LIMIT <= date('U');
+        
+        $needToUpdate = !$terminal || $terminal->created->format('U') + self::TIME_UPDATE_LIMIT <= date('U');
 
         if ($needToUpdate && !$this->updated) {
             $this->update();

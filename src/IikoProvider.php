@@ -4,12 +4,11 @@ namespace Linqur\IikoService;
 
 use Linqur\IikoService\Api\Api;
 use Linqur\IikoService\Api\Token\Token;
-use Linqur\IikoService\Entity\Order\Order;
+use Linqur\IikoService\Entity\Delivery\OrderType\OrderTypeList;
 use Linqur\IikoService\Entity\Organization\Organization;
 use Linqur\IikoService\Entity\Organization\OrganizationList;
 use Linqur\IikoService\Entity\PaymentType\PaymentTypeList;
 use Linqur\IikoService\Entity\Terminal\TerminalList;
-use Linqur\IikoService\Entity\Terminal\Terminal;
 use Linqur\IikoService\Settings\Settings;
 use Linqur\IikoService\Settings\SettingsValues;
 use Linqur\IikoService\Settings\SettingsValuesInterface;
@@ -69,6 +68,16 @@ class IikoProvider
         return PaymentTypeList::getInstance();
     }
 
+    /** 
+     * Получить список типов заказа
+     * 
+     * @return OrderTypeList
+     */
+    public function getOrderTypeList()
+    {
+        return OrderTypeList::getInstance();
+    }
+
     /**
      * Получить нуменклатуру
      * 
@@ -85,12 +94,13 @@ class IikoProvider
     /**
      * Создать зааказ
      * 
-     * @param Terminal $terminal 
-     * @param Order $order
+     * @param string $organizationId
+     * @param string $terminalId 
+     * @param array $order
      */
-    public function orderCreate($terminal, $order)
+    public function deliveryOrderCreate($organizationId, $terminalId, $order)
     {
-        return (new Api())->orderCreate($terminal->organizationId, $terminal->id, $order);
+        return (new Api())->deliveryOrderCreate($organizationId, $terminalId, $order);
     }
 
     /**
