@@ -334,6 +334,37 @@ class Request
         return $response;
     }
 
+    /**
+     * Получить список стоп листов
+     * 
+     * @param array $organizationIds
+     * 
+     * @return array
+     */
+    public function getStopList($organizationIds)
+    {
+        $body = $this
+            ->getBody()
+            ->setUrl(self::API_URL.'stop_lists')
+            ->addHeaders('Content-Type: application/json')
+            ->addHeaders('Authorization: Bearer '.Token::getInstance()->get())
+            ->addPost('organizationIds', $organizationIds)
+        ;
+
+        try {
+            $response = $this->handle($body);
+        } catch (RequestException $e) {
+            if ($e->getCode() === 401 && !$this->repeatRequest) {
+                $this->repeatRequest = true;
+                Token::getInstance()->getNew();
+                return $this->getStopList($organizationIds);
+            }
+            throw $e;
+        }
+        
+        return $response;
+    }
+
     /** @return RequestBody */
     private function getBody()
     {

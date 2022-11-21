@@ -128,4 +128,16 @@ class Api
     {
         return (new Request())->getOrder($organizationIds, $orderIds, $sourceKeys);
     }
+
+    /**
+     * Получить список стоп листов
+     * 
+     * @param array $organizationIds
+     * 
+     * @return array
+     */
+    public function getStopList($organizationIds)
+    {
+        return (new Request())->getStopList($organizationIds);
+    }
 }
